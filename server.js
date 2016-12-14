@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
 
 const {
     Todo
@@ -31,7 +32,7 @@ app.post('/todos', (req, res) => {
     });
 });
 
-// READ a todo
+// READ all todos
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({todos});
@@ -40,6 +41,20 @@ app.get('/todos', (req, res) => {
     });
 });
 
+// READ a todo
+app.get('/todos/:id', (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.send('Invalid _id');
+    }
+    Todo.findById(req.params.id).then((todo) => {
+        if (!todo) {
+            return res.status(404).send('Not found');
+        }
+        res.send({todo});
+    }).catch((e) => {
+        res.status(400).send(e.message);
+    });
+});
 
 app.listen(PORT, process.env.IP, () => {
     console.log('Server started on port', PORT);
