@@ -31,6 +31,15 @@ app.post('/todos', (req, res) => {
     });
 });
 
+// READ a todo
+app.get('/todos', (req, res) => {
+    Todo.find().then((todos) => {
+        res.send({todos});
+    }, (e) => {
+        res.status(404).send(e.message);
+    });
+});
+
 
 app.listen(PORT, process.env.IP, () => {
     console.log('Server started on port', PORT);
