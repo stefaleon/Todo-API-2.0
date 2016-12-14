@@ -35,7 +35,7 @@ describe('POST /todos', () => {
             });
     });
 
-    it ('it should not create a todo with invalid body data', (done) => {
+    it ('should not create a todo with invalid body data', (done) => {
         var testTodoText = '';
         request(app)
             .post('/todos')
@@ -51,4 +51,19 @@ describe('POST /todos', () => {
                 }).catch((err) => done(err));
             });
     });
+});
+
+describe('GET /todos', () => {
+
+    it ('should read all todos in db', (done) => {
+        request(app)
+            .get('/todos')
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todos.length).toBe(lengthBeforeTest);
+            })
+            .end(done);
+    });
+
+
 });
