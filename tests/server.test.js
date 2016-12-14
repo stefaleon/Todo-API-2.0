@@ -13,6 +13,7 @@ beforeEach((done) => {
 });
 
 describe('POST /todos', () => {
+
     it ('should create a new todo', (done) => {
         var testTodoText = 'Testing todo text';
         request(app)
@@ -27,8 +28,25 @@ describe('POST /todos', () => {
                     return done(err);
                 }
                 Todo.find().then((todos) => {
-                    expect(todos.length).toBe(lengthBeforeTest+1);
+                    expect(todos.length).toBe(lengthBeforeTest + 1);
                     expect(todos[todos.length-1].text).toBe(testTodoText);
+                    done();
+                }).catch((err) => done(err));
+            });
+    });
+
+    it ('it should not create a todo with invalid body data', (done) => {
+        var testTodoText = '';
+        request(app)
+            .post('/todos')
+            .send({text: testTodoText})
+            .expect(400)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                Todo.find().then((todos) => {
+                    expect(todos.length).toBe(lengthBeforeTest);
                     done();
                 }).catch((err) => done(err));
             });
