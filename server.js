@@ -95,7 +95,19 @@ app.delete('/todos/:id', (req, res) => {
     });
 });
 
+// CREATE a user
+app.post('/users', (req, res) => {
+    var user = new User({
+        email: req.body.email,
+        password: req.body.password
+    });
 
+    user.save().then((user) => {
+        res.send(user);
+    }).catch((e) => {
+        res.status(400).send(e.message);
+    });
+});
 
 app.listen(PORT, process.env.IP, () => {
     console.log('Server started on port', PORT);
