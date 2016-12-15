@@ -56,6 +56,30 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
+// UPDATE a todo
+app.put('/todos/:id', (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(404).send('Invalid _id');
+    }
+    var updatedCompletedAt = null;
+    if (req.body.todo.completed) {
+        updatedCompletedAt = new Date().getTime();
+    }
+    var updatedTodo = {
+        text: req.body.todo.text,
+        completed: req.body.todo.completed,
+        completedAt: updatedCompletedAt
+    };
+    Todo.findByIdAndUpdate(req.params.id, updatedTodo, {new: true}).then((todo) => {
+        if (!todo) {
+            return res.status(404).send('Not found');
+        }
+        res.send({todo});
+    }).catch((e) => {
+        res.status(400).send(e.message);
+    });
+});
+
 // DELETE a todo
 app.delete('/todos/:id', (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
