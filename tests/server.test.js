@@ -8,10 +8,14 @@ const {Todo} = require('../models/todo');
 
 const testTodos = [{
     _id: new ObjectID(),
-    text: 'First testTodo'
+    text: 'First testTodo',
+    completed: false,
+    completedAt: null
 },{
     _id: new ObjectID(),
-    text: 'Second testTodo'
+    text: 'Second testTodo',
+    completed: true,
+    completedAt: 1234
 }];
 
 beforeEach((done) => {
@@ -103,6 +107,63 @@ describe('GET /todos/:id', () => {
     });
 
 });
+
+describe('PUT /todos/:id', () => {
+
+    it ('should update a todo with a specific _id', (done) => {
+        request(app)
+            .put(`/todos/${testTodos[0]._id}`)
+            .send({ todo: {
+                text: 'new text for first testTodo',
+                completed: true
+                }
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe('new text for first testTodo');
+                expect(res.body.todo.completed).toBe(true);
+                expect(res.body.todo.completedAt).toBeA('number');
+            })
+            .end(done);
+    });
+
+    it ('should set completedAt to null if todo is not completed', (done) => {
+        request(app)
+            .put(`/todos/${testTodos[1]._id}`)
+            .send({ todo: {
+                completed: false
+                }
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.completed).toBe(false);
+                expect(res.body.todo.completedAt).toBe(null);
+            })
+            .end(done);
+    });
+
+    it ('should return 404 "Not Found" if a todo is not found', (done) => {
+        request(app)
+            .put(`/todos/5851c8b8503c3204d05043f2`)
+            .send({ todo: {
+                text: 'irrelevant because id is nonexistant'
+                }
+            })
+            .expect(404)
+            .end(done);
+    });
+
+    it ('should return 404 "Invalid _id" if the id is invalid', (done) => {
+        request(app)
+            .put(`/todos/1234567890`)
+            .expect(404)
+            .expect("Invalid _id")
+            .end(done);
+    });
+
+
+});
+
 
 describe('DELETE /todos/:id', () => {
 
