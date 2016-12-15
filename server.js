@@ -44,7 +44,7 @@ app.get('/todos', (req, res) => {
 // READ a todo
 app.get('/todos/:id', (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
-        return res.send('Invalid _id');
+        return res.status(404).send('Invalid _id');
     }
     Todo.findById(req.params.id).then((todo) => {
         if (!todo) {
@@ -59,7 +59,7 @@ app.get('/todos/:id', (req, res) => {
 // DELETE a todo
 app.delete('/todos/:id', (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
-        return res.send('Invalid _id');
+        return res.status(404).send('Invalid _id');
     }
     Todo.findByIdAndRemove(req.params.id).then((todo) => {
         if (!todo) {

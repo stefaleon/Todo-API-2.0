@@ -87,16 +87,54 @@ describe('GET /todos/:id', () => {
             .end(done);
     });
 
-    it ('should return 404 if a todo is not found', (done) => {
+    it ('should return 404 "Not found" if a todo is not found', (done) => {
         request(app)
             .get(`/todos/5851c8b8503c3204d05043f2`)
             .expect(404)
             .end(done);
     });
 
-    it ('should return "Invalid _id" if the id is invalid', (done) => {
+    it ('should return 404 "Invalid _id" if the id is invalid', (done) => {
         request(app)
             .get(`/todos/1234567890`)
+            .expect(404)
+            .expect("Invalid _id")
+            .end(done);
+    });
+
+});
+
+describe('DELETE /todos/:id', () => {
+
+    it ('should delete a todo with a specific _id ', (done) => {
+        request(app)
+            .delete(`/todos/${testTodos[0]._id}`)
+            .expect(200)
+            .expect((res) => {
+                 expect(res.body.todo.text).toBe(testTodos[0].text);
+            })
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                Todo.findById(testTodos[0]._id).then((todo) => {
+                    expect(todo).toNotExist();
+                    done();
+                }).catch((err) => done(err));
+            });
+    });
+
+    it ('should return 404 "Not Found" if a todo is not found', (done) => {
+        request(app)
+            .delete(`/todos/5851c8b8503c3204d05043f2`)
+            .expect(404)
+            .end(done);
+    });
+
+    it ('should return 404 "Invalid _id" if the id is invalid', (done) => {
+        request(app)
+            .delete(`/todos/1234567890`)
+            .expect(404)
             .expect("Invalid _id")
             .end(done);
     });
