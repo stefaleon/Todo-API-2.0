@@ -9,7 +9,8 @@
 * mongoose
 * Express
 * body-parser
-* validator
+* validator -> email validation
+* jsonwebtoken -> user authentication
 
 ### dev-dependencies
 * nodemon
