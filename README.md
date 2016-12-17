@@ -11,6 +11,7 @@
 * body-parser
 * validator -> email validation
 * jsonwebtoken -> user authentication
+* bcryptjs -> password hashing 
 
 ### dev-dependencies
 * nodemon
