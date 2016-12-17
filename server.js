@@ -104,12 +104,31 @@ app.post('/users', (req, res) => {
 
     user.save().then(() => {
         return user.generateAuthToken();
-    }).then((token) => {        
+    }).then((token) => {
         res.header('x-auth', token).send(user);
     }).catch((e) => {
         res.status(400).send(e.message);
     });
 });
+
+// auth middleware
+var authenticate = (req, res, next) => {
+    var token = req.header('x-auth');
+    User.findByToken(token).then((foundUser) => {
+        if (!foundUser) {
+            return Promise.reject();
+        }
+        req.user = foundUser;
+        req.token = token;
+        next();
+    }).catch((e) => {
+        res.status(401).send();
+    });
+};
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user);
+})
 
 app.listen(PORT, process.env.IP, () => {
     console.log('Server started on port', PORT);
